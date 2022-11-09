@@ -31,10 +31,10 @@ public class ImageLongDistanceHologramElement extends ImageAbstractHologramEleme
             player.networkHandler.sendPacket(new EntitySpawnS2CPacket(entityId, this.uuids.get(i), pos.x, pos.y + this.getHeightDifference(i, hologram), pos.z, 0, 0, EntityType.ARMOR_STAND, 0, Vec3d.ZERO, 0));
 
             {
-                var packet = HologramHelper.createUnsafe(EntityTrackerUpdateS2CPacket.class);
-                var accessor = (EntityTrackerUpdateS2CPacketAccessor) packet;
-
-                accessor.setId(entityId);
+//                var packet = HologramHelper.createUnsafe(EntityTrackerUpdateS2CPacket.class);
+//                var accessor = (EntityTrackerUpdateS2CPacketAccessor) packet;
+//
+//                accessor.setId(entityId);
                 List<DataTracker.Entry<?>> data = new ArrayList<>();
                 data.add(new DataTracker.Entry<>(EntityAccessor.getNoGravity(), true));
                 data.add(new DataTracker.Entry<>(EntityAccessor.getFlags(), (byte) 0x20));
@@ -42,9 +42,9 @@ public class ImageLongDistanceHologramElement extends ImageAbstractHologramEleme
                 data.add(new DataTracker.Entry<>(EntityAccessor.getNameVisible(), true));
                 data.add(new DataTracker.Entry<>(ArmorStandEntityAccessor.getArmorStandFlags(), (byte) 0x19));
 
-                accessor.setTrackedValues(data);
+//                accessor.setTrackedValues(data);
 
-                player.networkHandler.sendPacket(packet);
+                player.networkHandler.sendPacket(new EntityTrackerUpdateS2CPacket(entityId, (L) data));
             }
         }
     }

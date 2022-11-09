@@ -43,13 +43,13 @@ public class PlaceholderMovingTextHologramElement extends MovingTextHologramElem
                 Text out = this.getTextFor(player);
                 if (!out.equals(text)) {
                     EntityTrackerUpdateS2CPacket packet = HologramHelper.createUnsafe(EntityTrackerUpdateS2CPacket.class);
-                    EntityTrackerUpdateS2CPacketAccessor accessor = (EntityTrackerUpdateS2CPacketAccessor) packet;
-                    accessor.setId(this.entityId);
-                    List<DataTracker.Entry<?>> data = new ArrayList<>();
-                    data.add(new DataTracker.Entry<>(EntityAccessor.getCustomName(), Optional.of(out)));
-                    accessor.setTrackedValues(data);
-                    player.networkHandler.sendPacket(packet);
-                    this.cache.put(player.getUuid(), out);
+//                    EntityTrackerUpdateS2CPacketAccessor accessor = (EntityTrackerUpdateS2CPacketAccessor) packet;
+//                    accessor.setId(this.entityId);
+//                    List<DataTracker.Entry<?>> data = new ArrayList<>();
+//                    data.add(new DataTracker.Entry<>(EntityAccessor.getCustomName(), Optional.of(out)));
+//                    accessor.setTrackedValues(data);
+//                    player.networkHandler.sendPacket(packet);
+//                    this.cache.put(player.getUuid(), out);
                 }
 
                 if (clean) {

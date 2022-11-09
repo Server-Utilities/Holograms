@@ -6,6 +6,7 @@ import eu.pb4.holograms.api.elements.SpacingHologramElement;
 import eu.pb4.holograms.api.elements.clickable.EntityHologramElement;
 import eu.pb4.holograms.api.elements.item.AbstractItemHologramElement;
 import eu.pb4.holograms.api.elements.text.AbstractTextHologramElement;
+import eu.pb4.holograms.mod.HologramsMod;
 import eu.pb4.placeholders.api.Placeholders;
 import eu.pb4.placeholders.api.TextParserUtils;
 import net.minecraft.command.argument.ParticleEffectArgumentType;
@@ -23,10 +24,10 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3f;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import javax.imageio.ImageIO;
 import java.net.URL;
@@ -274,7 +275,7 @@ public abstract class StoredElement<T> {
                     this.value.parameters.asString(),
                     this.value.rate,
                     String.format("%.2f %.2f %.2f", this.value.pos.x, this.value.pos.y, this.value.pos.z),
-                    String.format("%.2f %.2f %.2f", this.value.delta.getX(), this.value.delta.getY(), this.value.delta.getZ()),
+                    String.format("%.2f %.2f %.2f", this.value.delta.get(0), this.value.delta.get(1), this.value.delta.get(2)),
                     String.format("%.2f", this.value.speed),
                     this.value.count,
                     net.minecraft.text.Text.translatable("text.holograms.particle." + (this.value.force ? "force" : "normal"))
@@ -284,14 +285,14 @@ public abstract class StoredElement<T> {
         @Override
         public @Nullable String toArgs() {
             return "particle " + this.value.parameters.asString() + " " + this.value.rate + " " + this.value.pos.x + " " + this.value.pos.y
-                    + " " + this.value.pos.z + " " + this.value.delta.getX() + " " + this.value.delta.getY() + " " + this.value.delta.getZ()
+                    + " " + this.value.pos.z + " " + this.value.delta.get(0) + " " + this.value.delta.get(1) + " " + this.value.delta.get(2)
                     + " " + this.value.speed + " " + this.value.count + " " + (this.value.force ? "force" : "normal");
         }
 
         public record Value(
                 ParticleEffect parameters,
                 Vec3d pos,
-                Vec3f delta,
+                Vector3f delta,
                 float speed,
                 int count,
                 boolean force,
@@ -303,9 +304,9 @@ public abstract class StoredElement<T> {
                 nbt.putDouble("PosX", pos.x);
                 nbt.putDouble("PosY", pos.y);
                 nbt.putDouble("PosZ", pos.z);
-                nbt.putFloat("DeltaX", delta.getX());
-                nbt.putFloat("DeltaY", delta.getY());
-                nbt.putFloat("DeltaZ", delta.getZ());
+                nbt.putFloat("DeltaX", delta.get(0));
+                nbt.putFloat("DeltaY", delta.get(1));
+                nbt.putFloat("DeltaZ", delta.get(2));
                 nbt.putFloat("Speed", speed);
                 nbt.putInt("Speed", count);
                 nbt.putBoolean("Force", force);
@@ -316,9 +317,9 @@ public abstract class StoredElement<T> {
             public static Value fromNbt(NbtCompound nbt) {
                 try {
                     return new Value(
-                            ParticleEffectArgumentType.readParameters(new StringReader(nbt.getString("Type"))),
+                            ParticleEffectArgumentType.readParameters(new StringReader(nbt.getString("Type")), HologramsMod.SERVER.getOverworld().createCommandRegistryWrapper(Registry.PARTICLE_TYPE_KEY)),
                             new Vec3d(nbt.getDouble("PosX"), nbt.getDouble("PosY"), nbt.getDouble("PosZ")),
-                            new Vec3f(nbt.getFloat("DeltaX"), nbt.getFloat("DeltaY"), nbt.getFloat("DeltaZ")),
+                            new Vector3f(nbt.getFloat("DeltaX"), nbt.getFloat("DeltaY"), nbt.getFloat("DeltaZ")),
                             nbt.getFloat("Speed"),
                             nbt.getInt("Speed"),
                             nbt.getBoolean("Force"),
@@ -326,7 +327,7 @@ public abstract class StoredElement<T> {
                     );
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return new Value(ParticleTypes.AMBIENT_ENTITY_EFFECT, Vec3d.ZERO, Vec3f.ZERO, 0f, 0, false, 0);
+                    return new Value(ParticleTypes.AMBIENT_ENTITY_EFFECT, Vec3d.ZERO, new Vector3f(0, 0, 0), 0f, 0, false, 0);
                 }
             }
         }
